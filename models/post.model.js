@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema(
   {
+    writer: {
+      type: Object,
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -12,10 +16,11 @@ const postSchema = new mongoose.Schema(
     },
     subcategory: {
       type: String,
-      required: true,
+      default: "",
     },
     slogan: {
       type: String,
+      default: "",
     },
     image: {
       type: Object,

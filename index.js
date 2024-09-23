@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 import postRoute from "./routes/posts.js"
+import authorRoute from "./routes/authors.js"
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -33,6 +34,7 @@ const connection = async () => {
   });
 
   app.use("/api/posts/", postRoute)
+  app.use("/api/authors/", authorRoute)
 
 
   //admindsports365

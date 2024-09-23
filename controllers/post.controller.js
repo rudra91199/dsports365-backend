@@ -25,11 +25,11 @@ export const getNewsForUsers = async (req, res) => {
   }
 };
 
-export const getNewsBySlug = async (req, res) => {
-  const slug = req.query.slug;
+export const getNewsByid = async (req, res) => {
+  const id = req.query.id;
   try {
     const result = await postModel
-      .findOne({ slug: slug })
+      .findById(id)
       .select(["-status", "-writer.email", "-updatedAt"]);
     return res.status(200).send({ result });
   } catch (error) {}
@@ -53,7 +53,6 @@ export const getProductByQuery = async (req, res) => {
 
 export const updateCount = async (req, res) => {
   const body = req.body;
-
   try {
     const result = await postModel.findByIdAndUpdate(
       { _id: body.id },
@@ -66,5 +65,30 @@ export const updateCount = async (req, res) => {
     res.status(200).send({ message: "News Status Updated" });
   } catch (error) {
     throw error;
+  }
+};
+
+export const newsCountByCategory = async (req, res) => {
+  const query = ["ক্রিকেট", "ফুটবল", "আরও খেলা"];
+  const counts = [];
+  try {
+    for (let i = 0; i < query.length; i++) {
+      const count = await postModel.countDocuments({ category: query[i] });
+      const categoryName = query[i];
+      counts.push({ categoryName, count });
+    }
+    return res.status(200).send({ counts });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const popularNews = async (req, res) => {
+  const limit = req.query.limit;
+  try {
+    const result = await postModel.find().sort({ count: -1 }).limit(limit);
+    return res.status(200).send({ result });
+  } catch (error) {
+    console.log(error);
   }
 };

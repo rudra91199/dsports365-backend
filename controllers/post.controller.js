@@ -9,14 +9,50 @@ cloudinary.config({
   secure: true,
 });
 
-export const getAllPosts = async (req, res) => {
+export const getNewsForUsers = async (req, res) => {
+  const page = req.query.page;
+  const limit = req.query.limit;
+  const filter = {
+    ...(req.query.category && { category: req.query.category }),
+    ...(req.query.subcategory && { subcategory: req.query.subcategory }),
+    ...(req.query.exclude === "সাক্ষাৎকার" && {
+      category: { $ne: req.query.exclude },
+    }),
+  };
   try {
-  const result = await postModel.find()
-  res.send(result);  
+    const result = await postModel
+      .find(filter)
+      .skip(page * limit)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .select(["-status", "-writer.email", "-updatedAt"]);
+    const count = await postModel.countDocuments(filter);
+    console.log(filter);
+    return res.status(200).send({ result, count });
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
+
+export const getAllPosts = async (req, res) => {
+  const role = req?.userInfo?.role;
+  const email = req?.userInfo?.email;
+  console.log(role, email);
+  try {
+    if (role === "admin") {
+      const result = await postModel.find().sort({ createdAt: -1 });
+      return res.status(200).send(result);
+    }
+    if (role === "writer") {
+      const result = await postModel
+        .find({ "writer.email": email })
+        .sort({ createdAt: -1 });
+      return res.status(200).send(result);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const createPost = async (req, res) => {
   const body = req.body;
@@ -40,7 +76,7 @@ export const createPost = async (req, res) => {
 export const getNews = async (req, res) => {
   const id = req.params.id;
   try {
-    const result = await postModel.findById(id);
+    const result = await postModel.findById(id).sort({ createdAt: -1 });
     res.send(result);
   } catch (error) {
     throw error;
@@ -70,5 +106,64 @@ export const uploadImages = async (req, res) => {
     return res
       .status(501)
       .json({ images: allImage, message: "Failed to add images." });
+  }
+};
+
+export const updateNews = async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+  try {
+    let newImage = req.body.oldImage;
+    if (body.image.length > 0) {
+      await cloudinary.uploader.destroy(body.oldImage.public_id);
+      const { url, public_id } = await cloudinary.uploader.upload(body.image, {
+        upload_preset: "news_images",
+        transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
+      });
+      newImage.url = url;
+      newImage.public_id = public_id;
+    }
+    const { oldImage, ...bodyData } = body;
+    const updatedNews = { ...bodyData, image: newImage };
+    const result = await postModel.findByIdAndUpdate(id, updatedNews, {
+      new: true,
+    });
+    return res
+      .status(200)
+      .json({ message: "News updated successfully.", result });
+  } catch (error) {
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const handleStatus = async (req, res) => {
+  try {
+    const result = await postModel.findByIdAndUpdate(
+      { _id: req.body.id },
+      {
+        $set: {
+          status: req.body.status,
+        },
+      }
+    );
+    res.status(200).send({ message: "News Status Updated" });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getProductByQuery = async (req, res) => {
+  const query = req.params;
+  console.log(query);
+  try {
+    const result = await postModel.find({
+      title: {
+        $regex: query.search,
+        $options: "i",
+      },
+    });
+    res.status(200).send({ result });
+  } catch (error) {
+    console.log(error);
   }
 };

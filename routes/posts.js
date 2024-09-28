@@ -23,6 +23,10 @@ import {
   getTrendingPost,
   updateTrendings,
 } from "../controllers/trendingPost.controller.js";
+import {
+  getEditorPicks,
+  updateEditorPicks,
+} from "../controllers/editorPicks.controller.js";
 
 const router = epxress.Router();
 
@@ -60,5 +64,11 @@ router.delete("/delete", verifyToken, isAdmin, deletePost);
 router.get("/trendingNews", getTrendingPost);
 
 router.put("/trending/update", verifyToken, isAdmin, updateTrendings);
+
+// editor picks
+
+router.get("/editorPicks", getEditorPicks);
+
+router.put("/editorPicks/update", updateEditorPicks);
 
 export default router;

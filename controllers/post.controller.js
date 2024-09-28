@@ -37,7 +37,6 @@ export const getNewsByid = async (req, res) => {
 
 export const getProductByQuery = async (req, res) => {
   const query = req.params;
-  console.log(query);
   try {
     const result = await postModel.find({
       title: {
@@ -92,5 +91,3 @@ export const popularNews = async (req, res) => {
     console.log(error);
   }
 };
-
-

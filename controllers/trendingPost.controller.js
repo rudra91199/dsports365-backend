@@ -21,7 +21,7 @@ export const updateTrendings = async (req, res) => {
       {
         new: true,
       }
-    );
+    ).select();
     if (result.modifiedCount === 1) {
       return res
         .status(200)

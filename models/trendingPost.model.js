@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const trendingPostSchema = new mongoose.Schema(
+export const trendingPostSchema = new mongoose.Schema(
   {
     index: {
       type: Number,

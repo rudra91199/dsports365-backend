@@ -37,6 +37,7 @@ export const getNewsByid = async (req, res) => {
 
 export const getProductByQuery = async (req, res) => {
   const query = req.params;
+  console.log(query);
   try {
     const result = await postModel.find({
       title: {
@@ -89,5 +90,19 @@ export const popularNews = async (req, res) => {
     return res.status(200).send({ result });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getEditorialNews = async (req, res) => {
+  try {
+    const result = await postModel.find({
+      "writer.email": "info.dsports365@gmail.com",
+    });
+    const count = await postModel.countDocuments({
+      "writer.email": "info.dsports365@gmail.com",
+    });
+    return res.status(200).send({ result, count });
+  } catch (error) {
+    throw error;
   }
 };

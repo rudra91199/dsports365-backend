@@ -12,6 +12,7 @@ import {
   uploadImages,
 } from "../controllers/post.AdminController.js";
 import {
+  getEditorialNews,
   getNewsByid,
   getNewsForUsers,
   getProductByQuery,
@@ -43,6 +44,9 @@ router.get("/getNewsCountByCategory", newsCountByCategory);
 router.get("/getPopularNews", popularNews);
 
 router.get("/getProductByQuery/:search", getProductByQuery);
+
+router.get("/getEditorialNews", getEditorialNews);
+
 //for admin panel
 
 router.get("/all", verifyToken, getAllPosts);

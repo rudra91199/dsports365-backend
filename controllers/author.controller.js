@@ -157,7 +157,6 @@ export const updateProfile = async (req, res) => {
           },
           { new: true }
         );
-        console.log(updateNews);
       }
       return res.status(200).send({ message: "Profile Updated", result });
     } else {

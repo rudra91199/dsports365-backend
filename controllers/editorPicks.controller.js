@@ -5,7 +5,6 @@ export const getEditorPicks = async (req, res) => {
     const result = await editorPicksModel.find().sort({ index: 1 });
     return res.status(200).send({ result });
   } catch (error) {
-    console.log(error);
   }
 };
 

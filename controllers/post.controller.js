@@ -18,7 +18,6 @@ export const getNewsForUsers = async (req, res) => {
       .sort({ createdAt: -1 })
       .select(["-status", "-writer.email", "-updatedAt"]);
     const count = await postModel.countDocuments(filter);
-    console.log(filter);
     return res.status(200).send({ result, count });
   } catch (error) {
     throw error;
@@ -46,7 +45,6 @@ export const getProductByQuery = async (req, res) => {
     });
     return res.status(200).send({ result });
   } catch (error) {
-    console.log(error);
   }
 };
 
@@ -78,7 +76,6 @@ export const newsCountByCategory = async (req, res) => {
     }
     return res.status(200).send({ counts });
   } catch (error) {
-    console.log(error);
   }
 };
 
@@ -88,6 +85,5 @@ export const popularNews = async (req, res) => {
     const result = await postModel.find().sort({ count: -1 }).limit(limit);
     return res.status(200).send({ result });
   } catch (error) {
-    console.log(error);
   }
 };

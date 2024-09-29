@@ -28,6 +28,12 @@ export const getAllPosts = async (req, res) => {
   const limit = req.query?.limit;
   const filter = {
     ...(req.query.status && { status: req.query.status }),
+    ...(req.query.search && {
+      title: {
+        $regex: req.query.search,
+        $options: "i",
+      },
+    }),
   };
 
   try {
@@ -61,7 +67,7 @@ export const getSingleNews = async (req, res) => {
   const id = req.query.id;
   if (RequestedEmail === varifiedEmail) {
     const result = await postModel.findById(id);
-    return res.status(201).send(result);
+    return res.status(201).send({ result });
   } else {
     return res.status(401).send({ message: "Access Denied" });
   }
